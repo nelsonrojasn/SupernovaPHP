@@ -9,15 +9,73 @@ Actualmente los primeros beta de Supernova funcionan bajo otro nombre clave en i
 
 
 Caracteristicas:
-*Facil integración
-*Curva rápida de aprendizaje
-*Documentación actualizada
-*Plugins externos
+* Facil integración
+* Curva rápida de aprendizaje
+* Documentación actualizada
+* Plugins externos
 
 Filosofías:
-*KISS (Keep it Simple and Stupid)
-*DRY (Don't repeat yourself)
+* KISS (Keep it Simple and Stupid)
+* DRY (Don't repeat yourself)
 
 
 Documentación de uso, configuración y links de descarga:
 [www.supernovaphp.com](www.supernovaphp.com)
+
+----------
+
+Ejemplo primitivo de uso
+========================
+Esto te permitirá utilizar el scaffolding integrado del framework,
+éste hará ingenieria inversa de la tabla de tu base de datos con el nombre de tu modelo y
+traerá los campos del formulario para el CRUD
+
+Importante:
+* Asegurate de tener el modulo **rewrite** activado
+* Las tablas en la base de datos se llaman en plural
+* Los modelos en singular
+* Los campos en singular
+
+Los 3 ejemplos son obligatorios para que funcione un modelo
+
+Ejemplo de un modelo:
+Nombre de archivo : Modelo.php en \App\Model
+```
+<?php
+
+namespace App\Model;
+
+class Modelo extends \Supernova\Model
+{
+    public $primaryKey = "id";
+    public $defaultKey = "nombre";
+    public $scaffolding = true;
+}
+```
+
+Ejemplo de un modelo de formulario:
+Nombre de archivo: ModeloForm.php en \App\Model
+```
+<?php
+
+namespace App\Model;
+
+class ModeloForm extends \App\Model\Modelo
+{
+    public $values;
+    public $schema;
+    public $notShow;
+}
+```
+
+Ejemplo de un controlador:
+Nombre de archivo : ModeloController.php en \App\Controller
+```
+<?php
+
+namespace App\Controller;
+
+class ModeloController extends \App\Main
+{
+}
+```
