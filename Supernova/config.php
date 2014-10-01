@@ -1,0 +1,14 @@
+<?php
+
+require_once ROOT. DS . "Config" . DS . "config.php";
+foreach ($config as $k => $v) {
+    define($k, $v);
+}
+unset($config);
+
+if (!defined("ENVIRONMENT") || ENVIRONMENT == "dev"){
+  ini_set('display_errors', 'On');
+  ini_set('error_reporting', E_ALL);
+  ini_set('display_startup_errors', 'On');
+  ini_set('log_errors', 'On');
+}
