@@ -20,7 +20,7 @@ Filosofías:
 
 
 Documentación de uso, configuración y links de descarga:
-[www.supernovaphp.com](www.supernovaphp.com)
+[www.supernovaphp.com](http://www.supernovaphp.com)
 
 ----------
 
