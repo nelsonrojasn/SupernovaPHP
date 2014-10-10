@@ -13,9 +13,9 @@ class View extends \Supernova\Controller
     }
 
     /**
-     * Set message in template
-     * @param string $msg Message string
-     * @param string $key Key name to save in Session variable
+     * Ingresa mensaje en sesión
+     * @param string $msg Mensaje
+     * @param string $key Nombre de la variable de sesión
      */
     public static function setMessage($msg, $key = 'message')
     {
@@ -23,8 +23,8 @@ class View extends \Supernova\Controller
     }
 
     /**
-     * Get message for template
-     * @param   String  $key    Type
+     * Obtiene mensaje en sesión
+     * @param   String  $key    Tipo
      */
     public static function getMessage($key = 'message')
     {
@@ -36,6 +36,9 @@ class View extends \Supernova\Controller
         }
     }
 
+    /**
+     * Muestra Layout y Template
+     */
     public static function render()
     {
         $model = \Supernova\Core::$elements['controller'];
@@ -73,6 +76,11 @@ class View extends \Supernova\Controller
         }
     }
 
+    /**
+     * Obtener contenido del template
+     * @param  array  $views Arreglo con los archivos con los templates
+     * @return mixed         Retorna el contenido del primer archivo que encuentre o false si es ninguno
+     */
     public static function getContent($views = array())
     {
         extract(self::$values);
@@ -88,6 +96,11 @@ class View extends \Supernova\Controller
         return false;
     }
 
+    /**
+     * Incluye un archivo CSS
+     * @param  string $cssFile nombre de archivo sin extension .css
+     * @return string          Vinculo con el archivo CSS
+     */
     public static function includeCss($cssFile)
     {
         $publicUrl = \Supernova\Route::getPublicUrl();
@@ -96,6 +109,11 @@ class View extends \Supernova\Controller
         return $output;
     }
 
+    /**
+     * Incluye un archivo javascript
+     * @param  string $jsFile Nombre de archivo sin extension .js
+     * @return string         Vinculo con el archivo JS
+     */
     public static function includeJs($jsFile)
     {
         $publicUrl = \Supernova\Route::getPublicUrl();
@@ -104,6 +122,11 @@ class View extends \Supernova\Controller
         return $output;
     }
 
+    /**
+     * Llama a las paginas de error
+     * @param  integer $num          Numero de error a mostrar
+     * @param  string  $encodedError Depuración de error encriptado
+     */
     public static function callError($num = 404, $encodedError = "")
     {
         include(ROOT.DS.\Supernova\Route::getPublicFolder().DS."errors".DS.$num.'.php');

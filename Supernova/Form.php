@@ -2,9 +2,16 @@
 
 namespace Supernova;
 
+/**
+ * Modulo de Formularios
+ */
 class Form extends \Supernova\Model
 {
     public static $counter = 0;
+
+    public static function setContentType($type = "application/x-www-form-urlencoded"){
+        return $_SERVER['CONTENT_TYPE'] = $type;
+    }
 
     public static function create($args)
     {

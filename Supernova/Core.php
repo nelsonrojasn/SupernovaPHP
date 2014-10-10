@@ -2,112 +2,23 @@
 
 namespace Supernova;
 
+/**
+ * Núcleo de Supernova
+ */
 class Core
 {
+    public static $namespace;
     public static $elements = array();
     private static $request = array();
-    public static $namespace;
+    private static $dependences = ['mcrypt','mysql','pdo'];
 
-    public static function initialize()
-    {
-        \Supernova\Profiler::start();
-        session_start();
-        $_SERVER['CONTENT_TYPE'] = "application/x-www-form-urlencoded";
-        date_default_timezone_set(TIMEZONE);
-        \Supernova\Translate::setLanguage(LANGUAGE_DEFAULT);
-        \Supernova\Security::removeMagicQuotes();
-        \Supernova\Security::unregisterGlobals();
-        \Supernova\Security::cleanAllVars();
-        self::setPostParameters(\Supernova\Security::sanitize($_POST));
-        self::setFilesParameters(\Supernova\Security::sanitize($_FILES));
-    }
-
-    public static function setGetParameters($params = array())
-    {
-        self::$request['get'] = \Supernova\Security::sanitize($params);
-        unset($_GET);
-    }
-
-    public static function setPostParameters($params = array())
-    {
-        self::$request['post'] = $params;
-        unset($_POST);
-    }
-
-    public static function setFilesParameters($params = array())
-    {
-        self::$request['files'] = $params;
-        unset($_FILES);
-    }
-
-    public static function getFilesParameters()
-    {
-        return self::$request['files'];
-    }
-
-    public static function getGetParameters()
-    {
-        return self::$request['get'];
-    }
-
-    public static function getPostParameters()
-    {
-        return self::$request['post'];
-    }
-
-    public static function setRequest()
-    {
-        if (HTACCESS) {
-            $pos = strrpos($_SERVER['QUERY_STRING'], "url=");
-            self::setGetParameters(explode('/', ($pos !== false) ? str_replace('url=', '', $_SERVER['QUERY_STRING']) : ''));
-        } else {
-            self::setGetParameters(explode('/', $_SERVER['QUERY_STRING']));
-        }
-    }
-
-    public static function setController($urlQuery)
-    {
-        $controller = \Supernova\Inflector::underToCamel(current($urlQuery));
-        if (empty($controller)) {
-            debug(__("No controller called"));
-            \Supernova\View::callError(404);
-        }
-        self::$elements['controller'] = $controller;
-        return true;
-    }
-
-    public static function setAction($urlQuery)
-    {
-        $action = \Supernova\Inflector::underToCamel(current($urlQuery));
-        $action = (!empty($action)) ? $action : "Index"; // default action: Index
-        self::$elements['action'] = $action;
-        return true;
-    }
-
-    public static function setPrefix($urlQuery)
-    {
-        $prefix = ucfirst(\Supernova\Inflector::underToCamel(current($urlQuery)));
-        require ROOT. DS . "Config" . DS . "routing.php";
-        if (in_array($prefix, $routing['prefix'])) {
-            self::$elements['prefix'] = $prefix;
-            return true;
-        }
-        self::$elements['prefix'] = "";
-        return false;
-    }
-
-    public static function setLanguage($urlQuery)
-    {
-        $language = current($urlQuery);
-        $file = ROOT.DS.'Locale'.DS.$language.'.php';
-        if (file_exists($file) || $language == "en") {
-            \Supernova\Translate::setLanguage($language);
-            return true;
-        }
-        \Supernova\Translate::setLanguage(LANGUAGE_DEFAULT);
-        return false;
-    }
-
+    /**
+     * Ingresa los elementos
+     *
+     * Supernova separa cada capa de la aplicación en "elementos",
+     * entre los que se encuentran:
+     * Lenguaje, Prefijo, Controlador, Accion
+     */
     public static function setElements()
     {
         require ROOT. DS . "Config" . DS . "routing.php";
@@ -127,6 +38,170 @@ class Core
         }
     }
 
+    /**
+     * Verifica si las dependencias necesarias estan cargadas en PHP
+     */
+    public static function moduleCheck()
+    {
+        try {
+            foreach (self::$dependences as $extension) {
+                if (!extension_loaded($extension)) {
+                    throw new Exception($extension);
+                }
+            }
+        } catch (Exception $e) {
+            debug('extension '.$e->getMessage().' not loaded');
+            \Supernova\View::callError(500);
+        }
+    }
+
+    /**
+     * Inicializa y limpia parametros
+     */
+    public static function initialize()
+    {
+        date_default_timezone_set(TIMEZONE);
+        \Supernova\Profiler::start();
+        \Supernova\Session::start();
+        \Supernova\Security::cleanAll();
+        \Supernova\Form::setContentType();
+        \Supernova\Translate::setLanguage(LANGUAGE_DEFAULT);
+        self::setPostParameters(\Supernova\Security::sanitize($_POST));
+        self::setFilesParameters(\Supernova\Security::sanitize($_FILES));
+    }
+
+    /**
+     * Ingresa parametros GET
+     * @param array $params Parametros GET
+     */
+    public static function setGetParameters($params = array())
+    {
+        self::$request['get'] = \Supernova\Security::sanitize($params);
+        unset($_GET);
+    }
+
+    /**
+     * Ingresa parametros POST
+     * @param array $params Parametros POST
+     */
+    public static function setPostParameters($params = array())
+    {
+        self::$request['post'] = $params;
+        unset($_POST);
+    }
+
+    /**
+     * Ingresa parametros de FILES (Archivos)
+     * @param array $params Parametros FILES
+     */
+    public static function setFilesParameters($params = array())
+    {
+        self::$request['files'] = $params;
+        unset($_FILES);
+    }
+
+    /**
+     * Obtiene parametros de FILES (Archivos)
+     * @return array Parametros de FILES
+     */
+    public static function getFilesParameters()
+    {
+        return self::$request['files'];
+    }
+
+    /**
+     * Obtiene parametros GET
+     * @return array Parametros GET
+     */
+    public static function getGetParameters()
+    {
+        return self::$request['get'];
+    }
+
+    /**
+     * Obtener parametros POST
+     * @return array Parametros POST
+     */
+    public static function getPostParameters()
+    {
+        return self::$request['post'];
+    }
+
+    /**
+     * Ingresa el request de la ruta
+     */
+    public static function setRequest()
+    {
+        if (HTACCESS) {
+            $pos = strrpos($_SERVER['QUERY_STRING'], "url=");
+            self::setGetParameters(explode('/', ($pos !== false) ? str_replace('url=', '', $_SERVER['QUERY_STRING']) : ''));
+        } else {
+            self::setGetParameters(explode('/', $_SERVER['QUERY_STRING']));
+        }
+    }
+
+    /**
+     * Ingresa el nombre del controlador
+     * @param array $urlQuery Arreglo con request
+     */
+    public static function setController($urlQuery)
+    {
+        $controller = \Supernova\Inflector::underToCamel(current($urlQuery));
+        if (empty($controller)) {
+            debug(__("No controller called"));
+            \Supernova\View::callError(404);
+        }
+        self::$elements['controller'] = $controller;
+        return true;
+    }
+
+    /**
+     * Ingresa el nombre de la acción
+     * @param array $urlQuery Arreglo con request
+     */
+    public static function setAction($urlQuery)
+    {
+        $action = \Supernova\Inflector::underToCamel(current($urlQuery));
+        $action = (!empty($action)) ? $action : "Index"; // default action: Index
+        self::$elements['action'] = $action;
+        return true;
+    }
+
+    /**
+     * Ingresa el nombre del prefijo
+     * @param array $urlQuery Arreglo con request
+     */
+    public static function setPrefix($urlQuery)
+    {
+        $prefix = ucfirst(\Supernova\Inflector::underToCamel(current($urlQuery)));
+        require ROOT. DS . "Config" . DS . "routing.php";
+        if (in_array($prefix, $routing['prefix'])) {
+            self::$elements['prefix'] = $prefix;
+            return true;
+        }
+        self::$elements['prefix'] = "";
+        return false;
+    }
+
+    /**
+     * Ingresa el prefijo de lenguaje
+     * @param array $urlQuery Arreglo con request
+     */
+    public static function setLanguage($urlQuery)
+    {
+        $language = current($urlQuery);
+        $file = ROOT.DS.'Locale'.DS.$language.'.php';
+        if (file_exists($file) || $language == "en") {
+            \Supernova\Translate::setLanguage($language);
+            return true;
+        }
+        \Supernova\Translate::setLanguage(LANGUAGE_DEFAULT);
+        return false;
+    }
+
+    /**
+     * Carga el controlador en memoria
+     */
     public static function checkController()
     {
         $controller = self::$elements['controller'];
@@ -142,6 +217,9 @@ class Core
         }
     }
 
+    /**
+     * Carga la acción en memoria
+     */
     public static function checkAction()
     {
         $mainAppController = new \App\Main();
@@ -163,6 +241,9 @@ class Core
         \Supernova\View::render();
     }
 
+    /**
+     * Procesa el formulario recibido en POST
+     */
     public static function processForm()
     {
         $namespace = "\App\Model\\".self::$elements['controller'];
@@ -172,6 +253,10 @@ class Core
         }
     }
 
+    /**
+     * Verifica si la conexión es segura (SSL)
+     * @return bool true o false
+     */
     public static function checkSSL()
     {
         return (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] != 'off') ? true : false;

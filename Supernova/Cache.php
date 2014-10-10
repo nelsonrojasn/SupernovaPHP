@@ -2,8 +2,16 @@
 
 namespace Supernova;
 
+/** 
+ * Cache del modelo de las tablas
+ */
 class Cache
 {
+    /**
+     * Carga cache del modelo
+     * @param  string $model Nombre del modelo
+     * @return string        Esquema del modelo desencriptado
+     */
     public static function load($model)
     {
         $filename = ROOT.DS."Cache".DS.$model;
@@ -11,10 +19,14 @@ class Cache
             self::generate($model);
         }
         parse_str(\Supernova\Crypt::decrypt(file_get_contents($filename)), $output);
-
         return $output;
     }
 
+    /**
+     * Genera cache del modelo
+     * @param  string $model Nombre del modelo
+     * @return null
+     */
     public static function generate($model)
     {
         $dirName = ROOT.DS.'Cache';

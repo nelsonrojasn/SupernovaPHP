@@ -3,6 +3,7 @@
 include ROOT . DS . "Supernova" . DS . "config.php";
 include ROOT . DS . "Supernova" . DS . "globalMethods.php";
 
+\Supernova\Core::moduleCheck();
 \Supernova\Core::initialize();
 \Supernova\Core::setRequest();
 \Supernova\Core::setElements();

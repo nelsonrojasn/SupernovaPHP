@@ -2,6 +2,9 @@
 
 namespace Supernova;
 
+/**
+ * Controlador de Supernova
+ */
 class Controller
 {
     public static $model = array();
@@ -36,9 +39,9 @@ class Controller
     }
 
     /**
-    * Set variables to the view
-    * @param	mixed	$name	Key for value or array with values
-    * @param	mixed	$value	Values
+    * Envía variables a la vista
+    * @param	mixed	$name	arreglo
+    * @param	mixed	$value	valores
     */
     public static function set($name, $value = null)
     {
@@ -52,8 +55,8 @@ class Controller
     }
 
     /**
-     * Redirect to url
-     * @param	mixed	$url	Url or array width controller and action
+     * Redirige a una url
+     * @param	mixed	$url	Url o arreglo que especifica prefijo, controlador y accion
      */
     public static function redirect($url = null)
     {
@@ -63,6 +66,11 @@ class Controller
         die();
     }
 
+    /**
+     * Asigna mensaje flash en memoria hasta mostrarlo en la vista
+     * @param  array $args  array("Mensaje","tipo")
+     * @return null
+     */
     public static function flash($args)
     {
         $class = (isset($args['status'])) ? $args['status'] : "success";
@@ -74,11 +82,19 @@ class Controller
         \Supernova\View::setMessage($output);
     }
 
+    /**
+     * Define el layout a usar en el template
+     * @param string $layout nombre del layout
+     */
     public static function setLayout($layout = "default")
     {
         \Supernova\View::$layout = $layout;
     }
 
+    /**
+     * Deshabilita una acción en el controlador
+     * @return null
+     */
     public static function disabled()
     {
         debug(__("Disabled view"));

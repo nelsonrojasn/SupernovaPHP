@@ -2,10 +2,21 @@
 
 namespace Supernova;
 
+/**
+ * Depuración
+ */
 class Debug
 {
+    /**
+     * Almacena el historico de peticiones SQL
+     * @var array
+     */
     private static $logQuery = array();
 
+    /**
+     * Tipos de errores
+     * @var array
+     */
     private static $errorType = [
             E_ERROR              => 'Error',
             E_WARNING            => 'Warning',
@@ -23,6 +34,10 @@ class Debug
             8192                 => 'Unknown'
     ];
 
+    /**
+     * Muestra cuadro Debug
+     * @param  mixed $str String o array con valores
+     */
     public static function render($str)
     {
         if (!defined("ENVIRONMENT") || ENVIRONMENT == "dev") {
@@ -32,16 +47,22 @@ class Debug
             $file = str_replace(ROOT.DS, '', $secondTrace['file']);
             $line = $secondTrace['line'];
             $object = "";
-
             if (isset($secondTrace['object']) && is_object($secondTrace['object'])) {
                 $object = get_class($object);
             }
-
             echo self::style();
             echo self::drawDebugBox($object, $line, $file, $str);
         }
     }
 
+    /**
+     * Muestra cuadro de Error
+     * @param  integer $type    Numero de error
+     * @param  string $message Mensaje de error
+     * @param  string $file    Archivo de error
+     * @param  string $line    Linea de error
+     * @param  string $str     Depurado de error
+     */
     public static function renderError($type, $message = "", $file = "", $line = "", $str = "")
     {
         $fullfile = $file;
@@ -52,14 +73,21 @@ class Debug
             echo self::style($errorColor);
             echo self::drawDebugBox($type, $line, $file, $message);
         }
-        echo self::showLines(self::getLines($fullfile,$line),$line);
+        echo self::showLines(self::getLines($fullfile, $line), $line);
         $br = "\n";
-        $text = $type.$br.$line.$br.$file.$br.$message.$br.implode($br,self::getLines($fullfile,$line));
+        $text = $type.$br.$line.$br.$file.$br.$message.$br.implode($br, self::getLines($fullfile, $line));
         $encodedError = \Supernova\Crypt::encrypt($text);
         //$encodedError = \Supernova\Crypt::decrypt($encodedError);
         \Supernova\View::callError(500, $encodedError);
     }
-
+    
+    /**
+     * Dibuja cuadro de Debug
+     * @param  string $object Nombre del objeto
+     * @param  integer $line  Linea de error
+     * @param  string $file   Archivo de error
+     * @param  string $str    Mensaje de error
+     */
     private static function drawDebugBox($object, $line, $file, $str = "")
     {
         $object = ( isset(self::$errorType[$object]) ) ? __(self::$errorType[$object]) : __($object);
@@ -142,6 +170,10 @@ EOL;
         return $output;
     }
 
+    /**
+     * Almacena peticiones SQL en Histórico
+     * @param  string $query pretición SQL
+     */
     public static function logQuery($query = "")
     {
         $backtrace = debug_backtrace();
@@ -151,6 +183,10 @@ EOL;
         self::$logQuery[$class."->".$method."() ".__("Line").":".$line] = $query;
     }
 
+    /**
+     * Muestra el histórico de peticiones SQL registrados
+     * @return [type] [description]
+     */
     public static function showQuery()
     {
         $output ="<table style='font-size: 9px; width:750px; text-align:left; margin: 5px auto;'>";
@@ -163,19 +199,33 @@ EOL;
         return $output;
     }
 
-    private static function getLines($file,$line,$expand = 6){
+    /**
+     * Obtiene las lineas de un archivo a depurar
+     * @param  string  $file   Nombre del archivo
+     * @param  integer $line   Numero de linea
+     * @param  integer $expand Expandir cantidad de lineas
+     */
+    private static function getLines($file, $line, $expand = 6)
+    {
         $source = file($file);
         $body = array_slice($source, $line-$expand, $expand*2);
         return $body;
     }
 
-    private static function showLines($body,$line,$expand = 6){
+    /**
+     * Mostrar lineas en el depurador
+     * @param  string  $body   Cuerpo del archivo
+     * @param  integer $line   Numero de linea del archivo a marcar
+     * @param  integer $expand Expandir cantidad de lineas
+     */
+    private static function showLines($body, $line, $expand = 6)
+    {
         $output = "<div class='debug-box'>";
         $output.="<pre>";
         $output.="".__("Line")."\t".__("Source")."\n";
         $output.="<hr/>";
         $counter = 1;
-        foreach ($body as $eachLine){
+        foreach ($body as $eachLine) {
             $linenum = $line - $expand + $counter++;
             $checkLine = ($linenum >= $line-1 && $linenum <= $line+1) ? "checkLine" : "";
             $checkError = ($linenum == $line) ? "checkError" : "";
@@ -185,5 +235,4 @@ EOL;
         $output.="</div>";
         return $output;
     }
-
 }
