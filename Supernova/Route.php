@@ -6,13 +6,12 @@ class Route
 {
     public static function getPublicFolder()
     {
-        if (HTACCESS) {
+        if (HTACCESS){
             $public_directory = dirname($_SERVER['PHP_SELF']);
             $directory_array = explode('/', $public_directory);
         } else {
             $directory_array[] = "Public";
         }
-
         return end($directory_array);
     }
 
@@ -21,7 +20,7 @@ class Route
         $path = explode('/', dirname($_SERVER['PHP_SELF']));
         unset($path[array_search(self::getPublicFolder(), $path)]);
         $path = array_filter($path);
-        return ($path) ? implode("/", $path)."/" : "/";
+        return ($path) ? "/".implode("/", $path) : "/";
     }
 
     public static function getPublicUrl()
@@ -29,9 +28,14 @@ class Route
         return self::getBaseUrl().self::getPublicFolder();
     }
 
+    public static function getHost(){
+        return str_replace("/","",$_SERVER['HTTP_HOST']);
+    }
+
     public static function getBaseUrl()
     {
-        return "http://".$_SERVER['HTTP_HOST']."/".self::getRelativePath();
+        $httpString = (\Supernova\Core::checkSSL()) ? "https://" : "http://";
+        return $httpString.self::getHost().self::getRelativePath();
     }
 
     public static function generateUrl($url)
@@ -56,7 +60,8 @@ class Route
         foreach ($url as $k => $v) {
             $newUrl[$k]= $v;
         }
-        
+
+        array_filter($newUrl);
         $url = implode('/', $newUrl);
         return self::getBaseUrl().$url;
     }

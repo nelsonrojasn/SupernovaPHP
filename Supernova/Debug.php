@@ -17,7 +17,7 @@ class Debug
      * Tipos de errores
      * @var array
      */
-    private static $errorType = [
+    private static $errorType = array(
             E_ERROR              => 'Error',
             E_WARNING            => 'Warning',
             E_PARSE              => 'Parsing Error',
@@ -32,7 +32,7 @@ class Debug
             E_STRICT             => 'Runtime Notice',
             E_RECOVERABLE_ERROR  => 'Catchable Fatal Error',
             8192                 => 'Unknown'
-    ];
+    );
 
     /**
      * Muestra cuadro Debug
@@ -67,7 +67,9 @@ class Debug
     {
         $fullfile = $file;
         $file = str_replace(ROOT.DS, '', $file);
-        ob_clean();
+        if (ob_get_contents()){
+            ob_end_clean();  
+        }
         if (!defined("ENVIRONMENT") || ENVIRONMENT == "dev") {
             $errorColor = (in_array($type, array(E_ERROR,E_CORE_ERROR,E_USER_ERROR))) ? "#F6D8CE" : "#FFFFCC";
             echo self::style($errorColor);

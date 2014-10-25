@@ -56,16 +56,16 @@ class Helper extends \Supernova\View
                     }
                     $eachData.="</td>";
                 }
-                $actions = (isset($args['actions'])) ? $args['actions'] : [ 'edit' => __('Edit'), 'delete' => __('Delete') ];
+                $actions = (isset($args['actions'])) ? $args['actions'] : array( 'edit' => __('Edit'), 'delete' => __('Delete') );
                 if ($actions) {
                     $eachData.="<td>";
                     $eachLink="";
                     foreach ($actions as $action => $label) {
                         $eachLink.= \Supernova\Helper::link(
-                            [
-                                "href" => \Supernova\Route::generateUrl(["prefix" => \Supernova\Inflector::camelToUnder(\Supernova\Core::$elements['prefix']), "controller" => \Supernova\Inflector::camelToUnder(\Supernova\Core::$elements['controller']), "action" => $action, "id" => $results['id']]),
+                            array(
+                                "href" => \Supernova\Route::generateUrl(array("prefix" => \Supernova\Inflector::camelToUnder(\Supernova\Core::$elements['prefix']), "controller" => \Supernova\Inflector::camelToUnder(\Supernova\Core::$elements['controller']), "action" => $action, "id" => $results['id'])),
                                 "text" => $label
-                            ]
+                            )
                         );
                     }
                     $eachData.=$eachLink;
@@ -95,7 +95,7 @@ EOL;
 
     public static function link($args = array())
     {
-        $args['class'] = (isset($args['class']) && !empty($args['class'])) ? $args['class'] : [ "btn", "btn-default"];
+        $args['class'] = (isset($args['class']) && !empty($args['class'])) ? $args['class'] : array( "btn", "btn-default" );
 
         return "<a href='".$args["href"]."' class='".implode(" ", $args['class'])."' >".$args["text"]."</a>";
     }

@@ -48,11 +48,11 @@ class Sql
                 break;
             case '42S02':
                 $table = explode("'", $e->errorInfo[2]);
-                trigger_error($c.' :: '.inject(__('Table %tablename% not found in database'), [ 'tablename' => '<strong>'.$table[1].'</strong>']), E_USER_WARNING);
+                trigger_error($c.' :: '.inject(__('Table %tablename% not found in database'), array( 'tablename' => '<strong>'.$table[1].'</strong>' )), E_USER_WARNING);
                 break;
             case '42S22':
                 $column = explode("'", $e->errorInfo[2]);
-                trigger_error($c.' :: '.inject(__('Column %columnname% not found in database'), [ 'columnname' => '<strong>'.$column[1].'</strong>']), E_USER_WARNING);
+                trigger_error($c.' :: '.inject(__('Column %columnname% not found in database'),array( 'columnname' => '<strong>'.$column[1].'</strong>' )), E_USER_WARNING);
                 break;
             default:
                 trigger_error(__('SQL Error').' :: '.$e->getMessage(), E_USER_WARNING);

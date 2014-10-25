@@ -14,12 +14,18 @@ spl_autoload_register(
     }
 );
 
+/**
+ * Manejo de errores
+ */
 set_error_handler("errorHandler");
 function errorHandler($type, $message, $file, $line, $str = "")
 {
     \Supernova\Debug::renderError($type, $message, $file, $line, $str);
 };
 
+/**
+ * Manejo de finalización de ejecucion
+ */
 register_shutdown_function(
     function () {
         \Supernova\Profiler::end();
@@ -33,7 +39,7 @@ register_shutdown_function(
 );
 
 /**
- * debug : muestra depuración de variables en el navegador
+ * Depurador : muestra depuración de variables en el navegador
  * @param  mixed $str Arreglo o string
  * @return null
  */
@@ -43,7 +49,7 @@ function debug($str)
 }
 
 /**
- * __ : function para traducción de texto
+ * Función para traducción de texto
  * @param  string $str String original
  * @return string      String reemplazado
  */
@@ -53,7 +59,7 @@ function __($str)
 }
 
 /**
- * inject : Inyecta variables a un string
+ * Inyecta variables a un string
  * @param  string $str  texto
  * @param  array  $vars variables a reemplazar en el string
  * @return string       string inyectado
