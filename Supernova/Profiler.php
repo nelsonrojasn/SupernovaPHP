@@ -24,7 +24,7 @@ class Profiler
             echo self::styleTime();
             echo "<div class='profiler'>".
             "Supernova Framework &copy; 2014 :: ".__("Profiler")." :: ".//"<br/>".
-            __("Performance").": ".number_format($performance, 2)." ".__("seconds")." :: ".//"<br/>".
+            __("Performance").": ".number_format($performance, 4)." ".__("seconds")." :: ".//"<br/>".
             __("Memory allocated").": ".round(memory_get_usage()/1024)."Kb :: ".//"<br/>".
             __("Memory peak").": ".round(memory_get_peak_usage()/1024)."Kb"."<br/>".
             \Supernova\Debug::showQuery().

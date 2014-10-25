@@ -12,7 +12,7 @@ unset($config);
 /**
  * Ajustes para el reporte de errores
  */
-if (!is_defined("ENVIRONMENT") || ENVIRONMENT == "dev") {
+if (!defined("ENVIRONMENT") || ENVIRONMENT == "dev") {
     ini_set('display_errors', 'On');
     ini_set('error_reporting', E_ALL);
     ini_set('display_startup_errors', 'On');

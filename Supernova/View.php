@@ -41,6 +41,7 @@ class View extends \Supernova\Controller
      */
     public static function render()
     {
+        //header('Content-Type: text/html; charset=UTF-8');
         $model = \Supernova\Core::$elements['controller'];
         $prefix = (empty(\Supernova\Core::$elements['prefix'])) ? "Default" : \Supernova\Core::$elements['prefix'];
         $namespace = "\App\Model\\".$model;

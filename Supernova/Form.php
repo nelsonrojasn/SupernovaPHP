@@ -9,8 +9,14 @@ class Form extends \Supernova\Model
 {
     public static $counter = 0;
 
-    public static function setContentType($type = "application/x-www-form-urlencoded"){
+    public static function setContentType($type = "application/x-www-form-urlencoded")
+    {
         return $_SERVER['CONTENT_TYPE'] = $type;
+    }
+
+    public static function csrfToken()
+    {
+        return md5(time().uniqid());
     }
 
     public static function create($args)
@@ -25,7 +31,7 @@ class Form extends \Supernova\Model
         $action = (isset($args['action'])) ? \Supernova\Route::generateUrl($args['action']) : "";
         $output = "<form class='form-horizontal' role='form' action='$action' method='POST' >";
         // Genera los inputs // Generate inputs
-        $form->notShow = [ "created", "updated", "created_at", "updated_at", "modified" , "creado_en", "actualizado_en" ];
+        $form->notShow = array( "created", "updated", "created_at", "updated_at", "modified" , "creado_en", "actualizado_en" );
         foreach ($form->schema as $field) {
             if (!in_array($field['Field'], $form->notShow)) {
                 $output.= self::input($field, $form);

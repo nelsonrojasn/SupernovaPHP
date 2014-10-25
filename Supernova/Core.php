@@ -10,7 +10,7 @@ class Core
     public static $namespace;
     public static $elements = array();
     private static $request = array();
-    private static $dependences = ['mcrypt','mysql','pdo'];
+    private static $dependences = array('mcrypt','mysql','pdo');
 
     /**
      * Ingresa los elementos
@@ -50,7 +50,7 @@ class Core
                 }
             }
         } catch (Exception $e) {
-            debug('extension '.$e->getMessage().' not loaded');
+            debug(inject(__('extension %1 not loaded'), array("%1" => $e->getMessage())));
             \Supernova\View::callError(500);
         }
     }
@@ -228,12 +228,12 @@ class Core
         $namespace = self::$namespace;
         $actionClass = new $namespace();
         if (method_exists($namespace, "execute".self::$elements['prefix'].self::$elements['action'])) {
-            call_user_func_array([$actionClass, "execute".self::$elements['prefix'].self::$elements['action']], self::$request['get']);
+            call_user_func_array(array($actionClass, "execute".self::$elements['prefix'].self::$elements['action']), self::$request['get']);
         } else {
             if (method_exists($namespace, "execute".self::$elements['action'])) {
-                call_user_func_array([$actionClass, "execute".self::$elements['action']], self::$request['get']);
+                call_user_func_array(array($actionClass, "execute".self::$elements['action']), self::$request['get']);
             } else {
-                debug(__("Action not exist:")." <strong>execute".$action."</strong> ".__("in controller:")." <strong>".$namespace."</strong>");
+                debug(__("Action not exist:")." <strong>execute".self::$elements['action']."</strong> ".__("in controller:")." <strong>".$namespace."</strong>");
                 \Supernova\View::callError(404);
             }
         }

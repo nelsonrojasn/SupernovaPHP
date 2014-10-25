@@ -21,12 +21,12 @@ class Scaffolding
         $modelName = \Supernova\Controller::$model['singular'];
         $namespace = "\App\Model\\".$modelName;
         $object = new $namespace();
-        $$modelName = $namespace::findOne([ 'where' => [ $object->primaryKey => [ "=" => $id ]]]);
+        $$modelName = $namespace::findOne(array( 'where' => array( $object->primaryKey => array( "=" => $id ))));
         if ($$modelName) {
             \Supernova\Controller::set(compact($modelName));
         } else {
-            \Supernova\Controller::flash(["message" => __("Data does not exist for this Id"), "status" => "danger"]);
-            \Supernova\Controller::redirect(["prefix" => \Supernova\Core::$elements['prefix'], "controller" => $modelName, "action" => "index"]);
+            \Supernova\Controller::flash(array("message" => __("Data does not exist for this Id"), "status" => "danger"));
+            \Supernova\Controller::redirect(array("prefix" => \Supernova\Core::$elements['prefix'], "controller" => $modelName, "action" => "index"));
         }
     }
 
@@ -35,14 +35,14 @@ class Scaffolding
         $modelName = \Supernova\Controller::$model['singular'];
         $namespace = "\App\Model\\".$modelName;
         $object = new $namespace();
-        $$modelName = $namespace::findOne([ 'where' => [ $object->primaryKey => [ "=" => $id ]]]);
+        $$modelName = $namespace::findOne(array( 'where' => array( $object->primaryKey => array( "=" => $id ))));
         if ($$modelName) {
             $$modelName->delete();
-            \Supernova\Controller::flash(["message" => __("Delete successful"), "status" => "success"]);
+            \Supernova\Controller::flash(array( "message" => __("Delete successful"), "status" => "success" ));
         } else {
-            \Supernova\Controller::flash(["message" => __("Data does not exist for this Id"), "status" => "danger"]);
+            \Supernova\Controller::flash(array( "message" => __("Data does not exist for this Id"), "status" => "danger"));
         }
-        \Supernova\Controller::redirect(["prefix" => \Supernova\Core::$elements['prefix'], "controller" => $modelName, "action" => "index"]);
+        \Supernova\Controller::redirect(array( "prefix" => \Supernova\Core::$elements['prefix'], "controller" => $modelName, "action" => "index"));
     }
 
     public static function templateIndex()
@@ -50,23 +50,23 @@ class Scaffolding
         extract(\Supernova\View::$values);
         $name = \Supernova\Core::$elements['controller'];
         $pluralName = \Supernova\Inflector::pluralize($name);
-        $title = inject(__("List from %name%"), [ "name" => $pluralName ]);
+        $title = inject(__("List from %name%"), array( "name" => $pluralName ));
         $table = \Supernova\Helper::table(
-            [
+            array(
                 'values' => $$pluralName,
                 'use' =>
-                [
+                array(
                     'created' => '\Supernova\Helper::formatDate',
                     'updated' => '\Supernova\Helper::formatDate'
-                ]
-            ]
+                )
+            )
         );
 
         $link = \Supernova\Helper::link(
-            [
-                "href" => \Supernova\Route::generateUrl(["prefix" => \Supernova\Core::$elements['prefix'], "controller" => $name, "action" => "Add"]),
-                "text" => inject(__("Add %name%"), [ "name" => $name ])
-            ]
+            array(
+                "href" => \Supernova\Route::generateUrl(array("prefix" => \Supernova\Core::$elements['prefix'], "controller" => $name, "action" => "Add")),
+                "text" => inject(__("Add %name%"), array( "name" => $name ))
+            )
         );
 
         return "
@@ -85,13 +85,13 @@ class Scaffolding
     {
         extract(\Supernova\View::$values);
         $name = \Supernova\Core::$elements['controller'];
-        $title = inject(__("Add %name%"), [ "name" => $name ]);
-        $form = \Supernova\Form::create([ "model" => $name ]);
+        $title = inject(__("Add %name%"), array("name" => $name ));
+        $form = \Supernova\Form::create(array( "model" => $name ));
         $link = \Supernova\Helper::link(
-            [
-                "href" => \Supernova\Route::generateUrl(["prefix" => \Supernova\Core::$elements['prefix'], "controller" => $name, "action" => "index"]),
+            array(
+                "href" => \Supernova\Route::generateUrl(array("prefix" => \Supernova\Core::$elements['prefix'], "controller" => $name, "action" => "index")),
                 "text" => __("<< Back")
-            ]
+            )
         );
 
         return "
@@ -106,13 +106,13 @@ class Scaffolding
     {
         extract(\Supernova\View::$values);
         $name = \Supernova\Core::$elements['controller'];
-        $title = inject(__("Edit %name%: %item%"), [ "name" => $name, "item" => $$name ]);
-        $form = \Supernova\Form::create([ "model" => $name, "values" => $$name ]);
+        $title = inject(__("Edit %name%: %item%"), array( "name" => $name, "item" => $$name ));
+        $form = \Supernova\Form::create(array( "model" => $name, "values" => $$name ));
         $link = \Supernova\Helper::link(
-            [
-                "href" => \Supernova\Route::generateUrl(["prefix" => \Supernova\Core::$elements['prefix'], "controller" => $name, "action" => "index"]),
+            array(
+                "href" => \Supernova\Route::generateUrl(array("prefix" => \Supernova\Core::$elements['prefix'], "controller" => $name, "action" => "index")),
                 "text" => __("<< Back")
-            ]
+            )
         );
 
         return "

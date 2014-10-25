@@ -7,8 +7,8 @@ namespace Supernova;
  */
 class Crypt
 {
-    private static $key = "E4HD9h4DhS23DYfhHemkS3Nf";// 24 bit Key
-    private static $iv = "fYfhHeDm"; // 8 bit IV
+    private static $key = RANDOM_SEED; // "E4HD9h4DhS23DYfhHemkS3Nf";// 24 bit Key
+    private static $iv = EIGHTBIT_IV; // 8 bit IV
     private static $bit_check = 8; // bit amount for diff algor.
 
     /**

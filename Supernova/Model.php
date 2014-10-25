@@ -25,7 +25,7 @@ class Model extends \Supernova\Sql
         $functionPerfix = substr($name, 0, 3);
         $functionName = substr($name, 3);
         if (method_exists($this, $functionPerfix.$functionName)) {
-            return call_user_func_array([$this, $name], $arguments);
+            return call_user_func_array(array($this, $name), $arguments);
         } else {
             switch ($functionPerfix) {
                 case 'get':
@@ -35,7 +35,7 @@ class Model extends \Supernova\Sql
                     $this->set(substr($name, 3), $arguments);
                     break;
                 default:
-                    return call_user_func_array([$this, $name], $arguments);
+                    return call_user_func_array(array($this, $name), $arguments);
                     break;
             }
         }
@@ -54,7 +54,7 @@ class Model extends \Supernova\Sql
                     $namespace = "\App\Model\\".$modelName;
                     $vars = get_class_vars($namespace);
                     $foreingKey = $this->belongsTo[$modelName]['foreingKey'];
-                    return $namespace::find(['where' => [$vars['primaryKey'] => ['=' => $this->results[$foreingKey]]]]);
+                    return $namespace::find(array('where' => array($vars['primaryKey'] => array('=' => $this->results[$foreingKey]))));
                 }
             }
             trigger_error(__("Can't get value, column not exist").": ".$value, E_USER_ERROR);
@@ -104,17 +104,17 @@ class Model extends \Supernova\Sql
     private function isValid()
     {
         if ($this->save()) {
-            \Supernova\Controller::flash(["message" => __("Save successful"), "status" => "success"]);
+            \Supernova\Controller::flash(array("message" => __("Save successful"), "status" => "success"));
             return true;
         } else {
-            \Supernova\Controller::flash(["message" => __("Save failed"), "status" => "danger"]);
+            \Supernova\Controller::flash(array("message" => __("Save failed"), "status" => "danger"));
             return false;
         }
     }
 
     private function onError()
     {
-        \Supernova\Controller::flash(["message" => __("Validation error"), "status" => "danger"]);
+        \Supernova\Controller::flash(array("message" => __("Validation error"), "status" => "danger"));
         return false;
     }
 
